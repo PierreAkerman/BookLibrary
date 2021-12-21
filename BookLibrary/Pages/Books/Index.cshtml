@@ -5,11 +5,12 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Books</h1>
+<h1>Available Books</h1>
 
 <p>
-    <a asp-page="Create">Create New</a>
+    <a asp-page="Create">Add Book to Inventory</a>
 </p>
+
 <table class="table">
     <thead>
         <tr>
@@ -20,10 +21,10 @@
                 @Html.DisplayNameFor(model => model.Book[0].Title)
             </th>
              <th>
-                @Html.DisplayNameFor(model => model.Book[0].Author)
+                <a asp-page="./Index" asp-route-sortOrder="@Model.AuthorSort">@Html.DisplayNameFor(model => model.Book[0].Author)</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Book[0].Category)
+                <a asp-page="./Index" asp-route-sortOrder="@Model.CategorySort">@Html.DisplayNameFor(model => model.Book[0].Category)</a>
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Book[0].Description)
@@ -60,7 +61,7 @@
                 @Html.DisplayFor(modelItem => item.Atribute.Size)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ReleaseYear)
+                @item.ReleaseYear.Value.ToString("yyyy")
             </td>
             <td>
                 <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |

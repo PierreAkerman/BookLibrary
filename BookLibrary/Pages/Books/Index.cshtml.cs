@@ -19,14 +19,40 @@ namespace BookLibrary.Pages.Books
             _context = context;
         }
 
-        public IList<Book> Book { get;set; }
+        public IList<Book> Book { get; set; }
+        public string AuthorSort { get; set; }
+        public string CategorySort { get; set; }
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(string sortOrder)
         {
-            Book = await _context.Books
-                .Include(b => b.Atribute)
-                .Include(b => b.Author)
-                .Include(b => b.Category).ToListAsync();
+            AuthorSort = String.IsNullOrEmpty(sortOrder) ? "author" : "";
+            CategorySort = String.IsNullOrEmpty(sortOrder) ? "category" : "";
+
+            IQueryable<Book> books = from s in _context.Books.OrderBy(b => b.Title)
+                        .Include(b => b.Atribute)
+                        .Include(b => b.Author)
+                        .Include(b => b.Category)
+                        select s;
+
+            switch (sortOrder)
+            {
+                case "author":
+                    books = books.OrderBy(s => s.Author.Firstname);
+                    break;
+                case "category":
+                    books = books.OrderBy(s => s.Category.Category1);
+                    break;
+                default:
+                    books = books.OrderBy(b => b.Title);
+                    break;
+            }
+
+            Book = await books.AsNoTracking().ToListAsync();
+
+            //Book = await _context.Books.OrderBy(b => b.Title)
+            //    .Include(b => b.Atribute)
+            //    .Include(b => b.Author)
+            //    .Include(b => b.Category).ToListAsync();
         }
     }
 }

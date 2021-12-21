@@ -19,10 +19,28 @@
             @Html.DisplayFor(model => model.Book.Title)
         </dd>
         <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Book.Author)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Book.Author.Fullname)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Book.Category)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Book.Category.Category1)
+        </dd>
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Book.ReleaseYear)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Book.ReleaseYear)
+            @Model.Book.ReleaseYear.Value.ToString("yyyy")
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Book.Atribute)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Book.Atribute.Size)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Book.Description)
@@ -35,24 +53,6 @@
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Book.ImageUrl)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Book.Atribute)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Book.Atribute.Size)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Book.Author)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Book.Author.Fullname)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Book.Category)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Book.Category.Category1)
         </dd>
     </dl>
 </div>
