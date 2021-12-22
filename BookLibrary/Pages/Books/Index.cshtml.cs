@@ -20,15 +20,40 @@ namespace BookLibrary.Pages.Books
         }
 
         public IList<Book> Book { get; set; }
+        public string TitleSort { get; set; }
         public string AuthorSort { get; set; }
         public string CategorySort { get; set; }
+        public string SearchTerm { get; set; }
 
+        public async Task OnPostSearch(string SearchTerm)
+        {
+            if (!string.IsNullOrEmpty(SearchTerm))
+            {
+                IQueryable<Book> books = (IQueryable<Book>)_context.Books.Where(b => b.Title.ToLower().Contains(SearchTerm.ToLower()))
+                        .Include(b => b.Atribute)
+                        .Include(b => b.Author)
+                        .Include(b => b.Category);
+
+                Book = await books.AsNoTracking().ToListAsync();
+            }
+            else
+            {
+                IQueryable<Book> books = (IQueryable<Book>)_context.Books.OrderBy(b => b.Title)
+                        .Include(b => b.Atribute)
+                        .Include(b => b.Author)
+                        .Include(b => b.Category);
+
+                Book = await books.AsNoTracking().ToListAsync();
+            }
+
+        }
         public async Task OnGetAsync(string sortOrder)
         {
+            TitleSort = String.IsNullOrEmpty(sortOrder) ? "title" : "";
             AuthorSort = String.IsNullOrEmpty(sortOrder) ? "author" : "";
             CategorySort = String.IsNullOrEmpty(sortOrder) ? "category" : "";
 
-            IQueryable<Book> books = from s in _context.Books.OrderBy(b => b.Title)
+            IQueryable<Book> books = from s in _context.Books//.OrderBy(b => b.Title)
                         .Include(b => b.Atribute)
                         .Include(b => b.Author)
                         .Include(b => b.Category)
@@ -41,6 +66,9 @@ namespace BookLibrary.Pages.Books
                     break;
                 case "category":
                     books = books.OrderBy(s => s.Category.Category1);
+                    break;
+                case "title":
+                    books = books.OrderBy(s => s.Title);
                     break;
                 default:
                     books = books.OrderBy(b => b.Title);
