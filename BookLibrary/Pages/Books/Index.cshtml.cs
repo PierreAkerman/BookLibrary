@@ -29,7 +29,10 @@ namespace BookLibrary.Pages.Books
         {
             if (!string.IsNullOrEmpty(SearchTerm))
             {
-                IQueryable<Book> books = (IQueryable<Book>)_context.Books.Where(b => b.Title.ToLower().Contains(SearchTerm.ToLower()))
+                IQueryable<Book> books = (IQueryable<Book>)_context.Books.Where(b => b.Title.ToLower().Contains(SearchTerm.ToLower())
+                                                                                || b.Author.Firstname.ToLower().Contains(SearchTerm.ToLower())
+                                                                                || b.Author.Lastname.ToLower().Contains(SearchTerm.ToLower())
+                                                                                || b.Category.Category1.ToLower().Contains(SearchTerm.ToLower()))
                         .Include(b => b.Atribute)
                         .Include(b => b.Author)
                         .Include(b => b.Category);
@@ -45,7 +48,6 @@ namespace BookLibrary.Pages.Books
 
                 Book = await books.AsNoTracking().ToListAsync();
             }
-
         }
         public async Task OnGetAsync(string sortOrder)
         {
