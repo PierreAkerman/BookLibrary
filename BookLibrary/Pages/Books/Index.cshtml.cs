@@ -24,43 +24,30 @@ namespace BookLibrary.Pages.Books
         public string AuthorSort { get; set; }
         public string CategorySort { get; set; }
         public string SearchTerm { get; set; }
+        public string CurrentFilter { get; set; }
 
-        public async Task OnPostSearch(string SearchTerm)
-        {
-            if (!string.IsNullOrEmpty(SearchTerm))
-            {
-                IQueryable<Book> books = (IQueryable<Book>)_context.Books.Where(b => b.Title.ToLower().Contains(SearchTerm.ToLower())
-                                                                                || b.Author.Firstname.ToLower().Contains(SearchTerm.ToLower())
-                                                                                || b.Author.Lastname.ToLower().Contains(SearchTerm.ToLower())
-                                                                                || b.Category.Category1.ToLower().Contains(SearchTerm.ToLower()))
-                        .Include(b => b.Atribute)
-                        .Include(b => b.Author)
-                        .Include(b => b.Category);
-
-                Book = await books.AsNoTracking().ToListAsync();
-            }
-            else
-            {
-                IQueryable<Book> books = (IQueryable<Book>)_context.Books.OrderBy(b => b.Title)
-                        .Include(b => b.Atribute)
-                        .Include(b => b.Author)
-                        .Include(b => b.Category);
-
-                Book = await books.AsNoTracking().ToListAsync();
-            }
-        }
-        public async Task OnGetAsync(string sortOrder)
+        public async Task OnGetAsync(string sortOrder, string SearchTerm)
         {
             TitleSort = String.IsNullOrEmpty(sortOrder) ? "title" : "";
             AuthorSort = String.IsNullOrEmpty(sortOrder) ? "author" : "";
             CategorySort = String.IsNullOrEmpty(sortOrder) ? "category" : "";
+            CurrentFilter = SearchTerm;
 
-            IQueryable<Book> books = from s in _context.Books//.OrderBy(b => b.Title)
+            IQueryable<Book> books = from s in _context.Books
                         .Include(b => b.Atribute)
                         .Include(b => b.Author)
                         .Include(b => b.Category)
                         select s;
 
+            if (!string.IsNullOrEmpty(SearchTerm))
+            {
+                books = books.Where(b => b.Title.ToLower().Contains(SearchTerm.ToLower())
+                                                || b.Author.Firstname.ToLower().Contains(SearchTerm.ToLower())
+                                                || b.Author.Lastname.ToLower().Contains(SearchTerm.ToLower())
+                                                || b.Category.Category1.ToLower().Contains(SearchTerm.ToLower())
+                                                || b.Description.ToLower().Contains(SearchTerm.ToLower()));
+            }
+                
             switch (sortOrder)
             {
                 case "author":
@@ -78,11 +65,6 @@ namespace BookLibrary.Pages.Books
             }
 
             Book = await books.AsNoTracking().ToListAsync();
-
-            //Book = await _context.Books.OrderBy(b => b.Title)
-            //    .Include(b => b.Atribute)
-            //    .Include(b => b.Author)
-            //    .Include(b => b.Category).ToListAsync();
         }
     }
 }
